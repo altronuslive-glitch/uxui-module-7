@@ -81,7 +81,7 @@ h1{font-size:56px;line-height:1.06;font-weight:500;letter-spacing:-.035em}
 .phase{margin-bottom:80px;scroll-margin-top:90px}
 .phase:last-child{margin-bottom:0}
 .phase-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
-.phase-head h2{font-size:27px;font-weight:750;letter-spacing:-.025em}
+.phase-head h2{font-size:29px;font-weight:500;letter-spacing:-.03em}
 .tagl{font-size:14px;font-weight:600;color:var(--blue);background:var(--blueSoft);
   padding:5px 11px;border-radius:6px}
 .phase-note{font-size:15px;color:var(--dim);margin-bottom:20px;max-width:74ch}
@@ -147,7 +147,7 @@ ul.checks li:hover{background:var(--soft2)}
 /* ---------- ЗАКЛЮЧИТЕЛЬНАЯ ЦИТАТА ---------- */
 .note-quote{background:var(--card);border-radius:var(--r);padding:40px;margin-top:80px}
 .note-quote .qmark{color:var(--blue);display:block;margin-bottom:20px}
-.note-quote h2{font-size:24px;font-weight:750;letter-spacing:-.025em;margin-bottom:14px}
+.note-quote h2{font-size:26px;font-weight:500;letter-spacing:-.03em;margin-bottom:14px}
 .note-quote p{font-size:18px;line-height:1.55;color:var(--dim);max-width:72ch;margin-bottom:12px}
 .note-quote p.last{margin-bottom:0;color:var(--ink);font-weight:600}
 
@@ -157,16 +157,34 @@ ul.checks li:hover{background:var(--soft2)}
   font-size:14px;color:var(--dim2)}
 .foot b{color:var(--dim);font-weight:650}
 
+/* ---------- ПРОГРЕСС НА УЗКИХ ЭКРАНАХ ---------- */
+/* на мобильном кольцо в шапке заменяется полосой, закреплённой внизу экрана */
+.mprog{display:none}
+
 /* ---------- АДАПТИВ ---------- */
 @media (max-width:860px){
   .top-grid{grid-template-columns:1fr}
-  .ring{order:-1}
+  .ring{display:none}
   .project{grid-template-columns:1fr}
   .meta{grid-template-columns:1fr}
   .step-head{padding:22px 20px 14px}
   .step.collapsed .step-head{padding-bottom:22px}
   .step-body{padding:0 20px 22px}
-  h1{font-size:38px}
+  .note-quote{padding:26px 20px}
+  .note-quote h2{font-size:23px}
+  .note-quote p{font-size:16px}
+  .phase-head h2{font-size:24px}
+  h1{font-size:46px}
+  body{padding-bottom:104px}
+  .mprog{display:block;position:fixed;left:0;right:0;bottom:0;z-index:30;
+    background:var(--card);box-shadow:0 -4px 22px rgba(10,14,26,.12)}
+  .mprog-track{height:4px;background:rgba(10,14,26,.08)}
+  .mprog-bar{display:block;height:100%;width:0;background:var(--blue);transition:width .35s}
+  .mprog.done .mprog-bar{background:var(--ok)}
+  .mprog-row{display:flex;align-items:baseline;gap:10px;padding:14px 20px}
+  .mprog-row b{font-size:20px;font-weight:700;color:var(--blue)}
+  .mprog.done .mprog-row b{color:var(--ok)}
+  .mprog-row span{font-size:14px;color:var(--dim2)}
 }
 
 /* ---------- ПЕЧАТЬ / PDF ---------- */
@@ -174,7 +192,7 @@ ul.checks li:hover{background:var(--soft2)}
   @page{size:A4;margin:14mm}
   body{background:#fff;padding:0}
   .wrap{max-width:none;padding:0}
-  .controls,.chev{display:none!important}
+  .controls,.chev,.mprog{display:none!important}
   .top{padding:0}
   h1{font-size:34px}
   .lead{font-size:15px}
@@ -267,6 +285,11 @@ ul.checks li:hover{background:var(--soft2)}
     <p class="last">Пропущенный шаг — не ошибка. Ошибка — сделать вид, что данные были,
       и выдать догадку за факт.</p>
   </aside>
+
+  <div class="mprog" id="mprog">
+    <div class="mprog-track"><span class="mprog-bar" id="mprogBar"></span></div>
+    <div class="mprog-row"><b id="mprogPct">0%</b><span id="mprogCnt">0 из 30</span></div>
+  </div>
 
   <div class="foot">
     <div><b>Курс по UX/UI дизайну · Модуль 7.</b> Анализ потребностей пользователя и ниши. Уроки 7.1, 7.2, 7.3</div>
@@ -493,6 +516,10 @@ function refresh(){
   document.getElementById('ctlPct').textContent=pct+'%';
   document.getElementById('ctlCnt').textContent=done+' из '+all.length;
   document.querySelector('.ctl-pct').classList.toggle('done', pct===100);
+  document.getElementById('mprogPct').textContent=pct+'%';
+  document.getElementById('mprogCnt').textContent=done+' из '+all.length;
+  document.getElementById('mprogBar').style.width=pct+'%';
+  document.getElementById('mprog').classList.toggle('done', pct===100);
 }
 
 /* ---------- ПАНЕЛЬ ---------- */
