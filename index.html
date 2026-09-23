@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Курс по UX/UI дизайну · Модуль 7</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Трекер исследования перед проектом. Материал модуля 7 курса по UX/UI дизайну.">
+<meta name="theme-color" content="#F4F6FC">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232F6BFF'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11.5' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F6FC; --card:#fff; --soft:#EDF1FA; --soft2:#F8FAFF;
+  --ink:#0A0E1A; --dim:#4A5570; --dim2:#8A94A8;
+  --line:rgba(10,14,26,.09); --line2:rgba(10,14,26,.16);
+  --blue:#2F6BFF; --blue2:#1D4FD0; --blueSoft:rgba(47,107,255,.11);
+  --ok:#17A36B; --warn:#C2761B;
+  --r:16px; --r2:10px; --r3:8px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);
+  font-family:'Onest','Segoe UI',system-ui,-apple-system,sans-serif;
+  font-size:16px;-webkit-font-smoothing:antialiased;line-height:1.5;padding:0 0 80px}
+.wrap{max-width:1060px;margin:0 auto;padding:0 28px}
+
+/* ---------- ШАПКА ---------- */
+.top{padding:44px 0 0}
+.mod-line{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.mod-num{font-size:14px;font-weight:600;color:var(--dim2)}
+h1{font-size:42px;line-height:1.08;font-weight:800;letter-spacing:-.03em}
+.lead{font-size:17px;color:var(--dim);margin-top:14px;max-width:62ch}
+.lead b{color:var(--ink);font-weight:650}
+.top-grid{display:grid;grid-template-columns:1fr auto;gap:36px;align-items:start}
+
+/* кольцо прогресса */
+.ring{position:relative;width:132px;height:132px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .val{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ring .num{font-size:30px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.ring .cap{font-size:14px;font-weight:500;color:var(--dim2);margin-top:4px}
+
+/* поля проекта */
+.project{display:grid;grid-template-columns:1.6fr 1fr;gap:12px;margin-top:40px}
+.field{background:var(--card);border-radius:var(--r2);padding:11px 14px}
+.field label{display:block;font-size:14px;font-weight:400;color:var(--dim2);margin-bottom:3px}
+.field input,.field select{width:100%;border:0;background:transparent;font:inherit;
+  font-size:16px;font-weight:400;color:var(--ink);outline:none}
+.field input::placeholder{color:var(--dim2);font-weight:400}
+.field select{cursor:pointer}
+.budget{margin-top:12px;background:var(--blueSoft);border-radius:var(--r2);
+  padding:13px 16px;font-size:15px;color:var(--blue2)}
+.budget b{color:var(--blue2);font-weight:700}
+
+/* ---------- ПАНЕЛЬ УПРАВЛЕНИЯ ---------- */
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  position:sticky;top:0;z-index:20;padding:14px 0;background:var(--bg);
+  margin:40px 0}
+.btn{border:0;background:var(--card);color:var(--dim);font:inherit;font-size:14px;
+  font-weight:600;padding:10px 16px;border-radius:var(--r3);cursor:pointer;
+  display:inline-flex;align-items:center;gap:8px;transition:.15s}
+.btn:hover{background:#fff;color:var(--ink);box-shadow:0 2px 10px rgba(10,14,26,.07)}
+.btn.on{background:var(--blue);color:#fff}
+.btn.danger:hover{color:#C4344B}
+.btn.armed{background:#C4344B;color:#fff}
+.btn.armed:hover{background:#B02B41;color:#fff}
+.btn svg{flex:none}
+.spacer{flex:1}
+/* процент показывается, только когда панель прилипла к верху окна */
+.ctl-pct{display:inline-flex;align-items:baseline;gap:8px;white-space:nowrap;
+  opacity:0;visibility:hidden;transition:opacity .2s}
+.controls.stuck .ctl-pct{opacity:1;visibility:visible}
+.ctl-pct b{font-size:16px;font-weight:700;color:var(--blue)}
+.ctl-pct span{font-size:14px;color:var(--dim2)}
+.ctl-pct.done b{color:var(--ok)}
+
+/* ---------- РАЗДЕЛ ---------- */
+.phase{margin-bottom:80px;scroll-margin-top:90px}
+.phase:last-child{margin-bottom:0}
+.phase-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.phase-head h2{font-size:27px;font-weight:750;letter-spacing:-.025em}
+.tagl{font-size:14px;font-weight:600;color:var(--blue);background:var(--blueSoft);
+  padding:5px 11px;border-radius:6px}
+.phase-note{font-size:15px;color:var(--dim);margin-bottom:20px;max-width:74ch}
+
+/* ---------- ШАГ ---------- */
+.step{background:var(--card);border-radius:var(--r);margin-bottom:12px;overflow:hidden}
+.step-head{display:flex;gap:16px;align-items:flex-start;padding:40px 40px 20px;cursor:pointer;
+  user-select:none}
+.step.collapsed .step-head{padding-bottom:40px}
+.step.collapsed .step-body{display:none}
+.step-head .num{width:32px;height:32px;border-radius:var(--r3);flex:none;display:grid;place-items:center;
+  background:var(--blueSoft);color:var(--blue);font-size:14px;font-weight:700;margin-top:1px}
+.step.full .num{background:var(--ok);color:#fff}
+.step-ttl{flex:1;min-width:0}
+.step-ttl h3{font-size:19px;font-weight:700;letter-spacing:-.015em}
+.step-ttl .what{font-size:15px;color:var(--dim);margin-top:4px}
+.opt{display:inline-block;font-size:14px;font-weight:600;
+  color:var(--warn);background:rgba(194,118,27,.12);padding:2px 9px;border-radius:5px;
+  margin-left:9px;vertical-align:2px}
+.cnt{display:inline-block;font-size:14px;font-weight:600;color:var(--dim2);
+  white-space:nowrap;margin-left:10px;vertical-align:1px}
+.step.full .cnt{color:var(--ok)}
+/* стрелка: вниз у свёрнутого блока, вверх у развёрнутого */
+.chev{flex:none;color:var(--dim2);margin-top:4px;transition:transform .2s}
+.step:not(.collapsed) .chev{transform:rotate(180deg)}
+
+.step-body{padding:0 40px 40px}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.meta div{background:var(--soft);border-radius:var(--r2);padding:12px 15px}
+.meta .k{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:7px;letter-spacing:-.01em}
+.meta .v{font-size:15px;line-height:1.5;color:var(--dim)}
+.meta .v b{color:var(--ink);font-weight:650}
+
+/* пункты */
+/* отрицательный отступ гасит внутренний padding строки: текст пунктов
+   выравнивается по 40px, подсветка при наведении выходит чуть шире */
+ul.checks{list-style:none;display:flex;flex-direction:column;gap:2px;margin:0 -11px}
+ul.checks li{border-radius:var(--r2);transition:background .15s}
+ul.checks li:hover{background:var(--soft2)}
+.row{display:flex;gap:12px;align-items:flex-start;padding:10px 11px;cursor:pointer}
+.cb{appearance:none;-webkit-appearance:none;width:19px;height:19px;flex:none;margin-top:2px;
+  border:1.8px solid var(--line2);border-radius:5px;background:#fff;cursor:pointer;
+  display:grid;place-content:center;transition:.15s}
+.cb:hover{border-color:var(--blue)}
+.cb:checked{background:var(--blue);border-color:var(--blue)}
+.cb:checked::after{content:'';width:10px;height:6px;border:2px solid #fff;border-top:0;
+  border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.txt{flex:1;min-width:0}
+.txt .t{display:block;font-size:16px;line-height:1.45;font-weight:600;letter-spacing:-.005em}
+.txt .h{display:block;font-size:14px;line-height:1.5;color:var(--dim2);margin-top:4px}
+.cb:checked~.txt .t{color:var(--dim2);text-decoration:line-through;text-decoration-color:var(--line2)}
+.cb:checked~.txt .h{opacity:.6}
+
+/* заметки */
+.notes{margin-top:16px}
+.notes label{display:block;font-size:16px;font-weight:400;color:var(--dim2);margin-bottom:8px}
+.notes textarea{display:block;width:100%;min-height:120px;resize:vertical;border:0;
+  border-radius:var(--r2);padding:14px 16px;font:inherit;font-size:16px;color:var(--ink);
+  background:var(--soft);outline:none;line-height:1.5}
+.notes textarea::placeholder{color:var(--dim2)}
+.notes textarea:focus{background:var(--soft2);box-shadow:inset 0 0 0 1.5px var(--blue)}
+
+/* ---------- ЗАКЛЮЧИТЕЛЬНАЯ ЦИТАТА ---------- */
+.note-quote{background:var(--card);border-radius:var(--r);padding:40px;margin-top:80px}
+.note-quote .qmark{color:var(--blue);display:block;margin-bottom:20px}
+.note-quote h2{font-size:24px;font-weight:750;letter-spacing:-.025em;margin-bottom:14px}
+.note-quote p{font-size:18px;line-height:1.55;color:var(--dim);max-width:72ch;margin-bottom:12px}
+.note-quote p.last{margin-bottom:0;color:var(--ink);font-weight:600}
+
+/* ---------- ПОДВАЛ ---------- */
+.foot{margin-top:80px;padding-top:24px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  font-size:14px;color:var(--dim2)}
+.foot b{color:var(--dim);font-weight:650}
+
+/* ---------- АДАПТИВ ---------- */
+@media (max-width:860px){
+  .top-grid{grid-template-columns:1fr}
+  .ring{order:-1}
+  .project{grid-template-columns:1fr}
+  .meta{grid-template-columns:1fr}
+  .step-head{padding:22px 20px 14px}
+  .step.collapsed .step-head{padding-bottom:22px}
+  .step-body{padding:0 20px 22px}
+  h1{font-size:32px}
+}
+
+/* ---------- ПЕЧАТЬ / PDF ---------- */
+@media print{
+  @page{size:A4;margin:14mm}
+  body{background:#fff;padding:0}
+  .wrap{max-width:none;padding:0}
+  .controls,.chev{display:none!important}
+  .top{padding:0}
+  h1{font-size:28px}
+  .lead{font-size:15px}
+  .project{margin-top:20px}
+  .controls{margin:0}
+  .phase{margin-bottom:26px}
+  .foot{margin-top:24px}
+  .step,.field,.meta div,.notes textarea{box-shadow:none}
+  .step{border:1px solid var(--line);break-inside:avoid;page-break-inside:avoid;margin-bottom:10px}
+  .step.collapsed .step-body{display:block!important}
+  .phase{break-inside:auto}
+  .phase-head{break-after:avoid}
+  .step-head{cursor:default;padding:16px 16px 10px}
+  .step.collapsed .step-head{padding-bottom:16px}
+  .step-body{padding:0 16px 16px}
+  .notes textarea{min-height:44px;background:#fff}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="top-grid">
+      <div>
+        <div class="mod-line"><span class="mod-num">Модуль 7 · Материалы</span></div>
+        <h1>Трекер исследования<br>перед проектом</h1>
+      </div>
+      <div class="ring">
+        <svg width="132" height="132" viewBox="0 0 132 132">
+          <circle cx="66" cy="66" r="58" fill="none" stroke="rgba(10,14,26,.08)" stroke-width="10"/>
+          <circle id="ringBar" cx="66" cy="66" r="58" fill="none" stroke="#2F6BFF" stroke-width="10"
+                  stroke-linecap="round" stroke-dasharray="364.4" stroke-dashoffset="364.4"
+                  style="transition:stroke-dashoffset .45s cubic-bezier(.22,.72,.28,1),stroke .3s"/>
+        </svg>
+        <div class="val"><div class="num" id="ringPct">0%</div><div class="cap" id="ringCnt">0 из 0</div></div>
+      </div>
+    </div>
+
+    <div class="project">
+      <div class="field">
+        <label>Проект и ниша</label>
+        <input id="fProject" type="text" placeholder="Например: интернет-магазин велосипедов">
+      </div>
+      <div class="field">
+        <label>Тип сайта</label>
+        <select id="fType">
+          <option value="">Выберите тип</option>
+          <option value="land">Лендинг</option>
+          <option value="corp">Корпоративный сайт</option>
+          <option value="shop">Интернет-магазин</option>
+        </select>
+      </div>
+    </div>
+    <div class="budget" id="budget">
+      <b>Правило масштаба.</b> Лендинг — 2 часа исследования, корпоративный сайт — 3–4 часа, магазин — 6–8 часов.
+      Больше на коммерческом проекте обычно не окупается. Ресёрч закладывается в смету отдельным этапом.
+    </div>
+  </header>
+
+  <div id="sentinel" aria-hidden="true"></div>
+  <div class="controls">
+    <button class="btn" id="bExpand">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Развернуть всё</button>
+    <button class="btn" id="bCollapse">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 5h12M2 11h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Свернуть всё</button>
+    <button class="btn danger" id="bReset">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5V5h-2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Сбросить</button>
+    <span class="spacer"></span>
+    <span class="ctl-pct"><b id="ctlPct">0%</b><span id="ctlCnt">0 из 36</span></span>
+  </div>
+
+  <main id="root"></main>
+
+  <aside class="note-quote">
+    <svg class="qmark" width="34" height="26" viewBox="0 0 34 26" fill="none" aria-hidden="true">
+      <path d="M0 26V14.3C0 10 1 6.7 3 4.3 5 1.9 8 .5 12 0v5.2c-3.4.8-5.1 2.9-5.1 6.3H12V26H0Zm22 0V14.3c0-4.3 1-7.6 3-10 2-2.4 5-3.8 9-4.3v5.2c-3.4.8-5.1 2.9-5.1 6.3H34V26H22Z" fill="currentColor"/>
+    </svg>
+    <h2>Как относиться к этому списку</h2>
+    <p>Это не регламент, который нужно выполнить пункт в пункт, а сводка принципов и стандартов —
+      ориентир, к которому вы возвращаетесь по ходу работы.</p>
+    <p>Ни один проект не ложится в неё идеально: у одного нет текущего сайта, у другого не наберётся
+      полсотни отзывов, у третьего клиент не отдаст доступ к аналитике. Исходите из контекста
+      и из того, какие данные реально есть, — берите то, что работает на этот проект,
+      и честно отмечайте, чего собрать не удалось.</p>
+    <p class="last">Пропущенный шаг — не ошибка. Ошибка — сделать вид, что данные были,
+      и выдать догадку за факт.</p>
+  </aside>
+
+  <div class="foot">
+    <div><b>Курс по UX/UI дизайну · Модуль 7.</b> Анализ потребностей пользователя и ниши. Уроки 7.1, 7.2, 7.3</div>
+    <div>Чтобы сохранить в PDF: <b>Ctrl + P</b> → «Сохранить как PDF»</div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   ДАННЫЕ ТРЕКЕРА — пять разделов
+   ============================================================ */
+const PHASES = [
+{
+  key:'a', title:'Раздел 1. Брифинг и анализ бизнеса', lesson:'Урок 7.1',
+  note:'Что за бизнес перед нами и чего он хочет от сайта. Всё, что касается покупателя, разбираем отдельно — в разделе 3.',
+  steps:[
+  {
+    title:'Понять бизнес и снять бриф',
+    what:'Разобраться, что это за бизнес, задать вопросы клиенту и договориться о критерии приёмки.',
+    why:'Тип бизнеса напрямую задаёт структуру сайта: товар требует каталога и карточки, услуга — расчёта и заявки, B2B — счёта и менеджера. А без письменной договорённости приёмка превращается в разговор о вкусе.',
+    out:'Короткое описание бизнеса, заполненный бриф, мудборд с референсами, список пробелов и критерий приёмки в переписке или договоре.',
+    items:[
+      {t:'Описать бизнес по четырём осям',h:'Товар или услуга · B2C или B2B · опт или розница · массовый рынок или узкая ниша. «И опт, и розница» означает два сценария и два прайса на одном сайте'},
+      {t:'Пройти бриф по восьми вопросам',h:'Цель сайта · целевое действие · кто платит и кто решает · цикл сделки · средний чек · отличия · конкуренты · что нельзя трогать'},
+      {t:'Снять визуальные предпочтения и собрать мудборд',h:'Мудборд — подборка референсов, задающая визуальное направление. Попросите 3–5 сайтов, которые нравятся, и по каждому спросите, что именно нравится: воздух, крупные фото, короткий текст. Отдельно — что не нравится и почему. Плюс фирменный стиль: логотип, цвета, шрифты, брендбук. Это лекарство от «сделайте красиво»: у приёмки появляется опора'},
+      {t:'Пробелы закрыть самому, остальное вернуть клиенту списком',h:'Половину брифа дизайнер закрывает за 40 минут: сайт клиента, конкуренты, сайты поставщиков. Красные флаги вроде «аудитория — все» — сигнал, что часть работы за клиента сделаете вы. Заложите её в срок и смету'},
+      {t:'Зафиксировать критерий приёмки письменно, до старта',h:'Про структуру и сценарии: «размер подбирается на сайте, заказ — за четыре шага, без звонка». Конверсию не обещаем: на продажи влияют цена, товар, реклама и отдел продаж'}
+    ]
+  }]
+},
+{
+  key:'b', title:'Раздел 2. Конкурентный анализ', lesson:'Урок 7.2',
+  note:'Стандарт рынка — сильнейший аргумент дизайнера: это уже сложившееся ожидание пользователя, и отклонение от него придётся оправдывать. Опора — то, что повторяется у большинства выборки, а не то, что делает самый заметный игрок.',
+  steps:[
+  {
+    title:'Собрать и разобрать выборку',
+    what:'Найти 5–7 прямых конкурентов и 1–2 эталона и пройти их по восьми параметрам.',
+    why:'Один лидер может побеждать рекламным бюджетом, а его решение — оказаться наследием старой версии: норма видна только на выборке. При этом разбор без выводов остаётся описанием — вам нужен не пересказ чужих сайтов, а понимание, что в нише считается нормой и где у неё дыры.',
+    out:'Таблица по выборке с колонками «забрать себе» и «не повторять» плюс список стандартов ниши.',
+    items:[
+      {t:'5–7 прямых конкурентов, найденных минимум двумя способами',h:'Способы: спросить клиента · крупные игроки ниши · выдача по ключевым запросам · смежные ниши. Список клиента и список из поиска обычно не совпадают — расхождение само по себе находка'},
+      {t:'1–2 эталона под вашу главную сложность',h:'Эталон — не «красивый сайт», а сайт, который уже решил вашу задачу. Сложность «подбор по росту» — смотрим магазины обуви и одежды, а не соседей по нише'},
+      {t:'Восемь параметров по каждому сайту, в том числе на мобильной',h:'Ассортимент · позиционирование и оффер · структура и навигация · процесс приобретения (считаем шаги) · работа с ценой · блоки доверия · фишки и функциональные элементы · визуальный контент'},
+      {t:'По каждому конкуренту — «забрать себе» и «не повторять»',h:'Две короткие колонки. Без них таблица останется описанием, а не выводом'},
+      {t:'Отметить, что повторяется у большинства выборки',h:'Что есть у шести из семи — норма ниши и ваша главная опора. Признаки случайного решения: есть только у одного · противоречит остальному сайту · похоже на остаток старой версии'}
+    ]
+  },
+  {
+    title:'Разобрать текущий сайт клиента',
+    what:'Пройти сайт по шести вопросам и забрать данные, которые уже есть у клиента.',
+    why:'Свой сайт сравнивается с выборкой по тем же параметрам — так видно, где он отстаёт от нормы. Задача этапа — не полноценный аудит с документацией, а понимание недостатков.',
+    out:'10–20 выводов, разложенных по направлениям, и список реальных вопросов покупателей.',
+    optional:true,
+    items:[
+      {t:'Шесть вопросов к каждой ключевой странице',h:'Какую задачу решает · с каким запросом сюда приходят и какого сценария ждут · зачем здесь этот блок · можно ли сказать понятнее · элементы помогают или мешают · чего не хватает'},
+      {t:'Забрать данные, которые уже есть у клиента',h:'В Метрике главное — поисковые запросы внутри сайта, записи сессий, отказы по страницам. Плюс полчаса с отделом продаж: вопросы, возражения и причины отказов из первых рук. Просите конкретное, а не «доступ к аналитике»'},
+      {t:'Выводы в формате «проблема → доказательство → следствие → что делаем»',h:'Доказательство — «фильтр есть у 6 конкурентов из 7» плюс внутренний поиск, а не «мне кажется». Раскладываем по направлениям: юзабилити, информативность, восприятие, эффективность'}
+    ]
+  }]
+},
+{
+  key:'c', title:'Раздел 3. Анализ аудитории', lesson:'Уроки 7.1–7.3',
+  note:'Кто эти люди, чего они боятся и какими словами описывают свою задачу. Правило раздела: голос пользователя идёт вторым слоем поверх стандарта рынка. Отзыв в одиночку — наблюдение, отзыв поверх рыночной нормы — факт.',
+  steps:[
+  {
+    title:'Типы аудитории',
+    what:'Описать группы покупателей, их боли, язык и задачи — всё в одном месте.',
+    why:'Ситуация и страх подсказывают блоки страницы, а возраст и хобби — ни одного. Косвенные боли почти никогда не звучат в брифе и дают половину блоков.',
+    out:'Две группы покупателей с болями, список барьеров с цитатами, язык ниши и 3–5 job-историй.',
+    items:[
+      {t:'Основная и дополнительная группы покупателей',h:'Кто платит, кто пользуется и кто принимает решение — часто это разные люди. Для каждой группы: что уже знает о товаре, насколько разбирается'},
+      {t:'Прямые и косвенные боли каждой группы',h:'Прямые — ради чего пришёл, их называют сами. Косвенные — чего боится по дороге: ошибиться с выбором, не разобраться со сборкой, остаться без поддержки. Именно косвенные дают блоки доверия'},
+      {t:'Язык ниши: 10–15 запросов в Wordstat',h:'Wordstat — бесплатный сервис Яндекса, показывает, что и как часто ищут. Отметьте формулировки, которые просятся в фильтры и заголовки: «велосипед на рост 175» — это требование к каталогу, а не просто заголовок'},
+      {t:'Сезонность и цикл принятия решения',h:'Сезонность — фактор, который учитываем, а не то, на что влияем дизайном. Цикл: импульс (минуты) — короткая страница; сравнение (дни) — характеристики и отзывы; B2B (недели) — кейсы и документы'},
+      {t:'30–50 отзывов, разложенных на четыре типа находок',h:'Критерии выбора (по чему сравнивают) · отталкивающие факторы (из-за чего уходят, не начав сравнивать) · барьеры и страхи · живые формулировки. Первые два часто валят в один список — это разные задачи для страницы'},
+      {t:'К каждому барьеру — цитата и счёт',h:'Не «люди боятся ошибиться с размером», а «14 отзывов из 40». Счёт превращает наблюдение в аргумент. Дальше смотрим, как этот барьер уже закрыт у конкурентов'},
+      {t:'3–5 job-историй: «Когда [ситуация], я хочу [задача], чтобы [результат]»',h:'По 1–2 на группу. Три типовые ошибки: история пересказывает сама себя · демография вместо ситуации · результат — покупка, хотя покупка это цель дизайнера, а не человека. Напротив каждой истории выпишите блок, который она подсказывает'}
+    ]
+  }]
+},
+{
+  key:'d', title:'Раздел 4. Формирование структуры', lesson:'Урок 7.3',
+  note:'Здесь исследование превращается в макет. Ключевая развилка: скелет страницы берётся у рынка, а барьеры его настраивают. Обратный порядок — выводить каждый блок из конкретного страха — на практике не работает.',
+  steps:[
+  {
+    title:'Собрать структуру',
+    what:'Пройти путь человека, вывести из него разделы сайта и собрать каркас главной страницы.',
+    why:'Точка отвала — место, где человек не получил ответа и ушёл искать его в другом месте. А раздел появляется, только если его требует сценарий или закон.',
+    out:'Перечень разделов сайта и таблица блоков, отсортированная по приоритету, — это и есть каркас страницы.',
+    items:[
+      {t:'Путь до целевого действия с точками отвала',h:'К каждому шагу четыре вопроса: что ищет · чего боится · что должно быть на экране · куда уйдёт, если этого нет. Посчитайте шаги: тот, что не добавляет уверенности, — лишний'},
+      {t:'Перечень разделов: основные, вторичные, информационные',h:'Основные — каталог, карточка, корзина. Вторичные — сервис, подбор, где посмотреть вживую. Информационные — доставка, гарантия, контакты, политика. Полную карту сайта магазина соберём в модуле 8'},
+      {t:'Скелет страницы от рынка, настройка барьерами',h:'Стандартный набор блоков ниши → поднять выше то, что подтверждено отзывами → добавить то, чего в нише нет, но люди просят. Последнее и есть преимущество'},
+      {t:'Таблица блоков: блок · что закрывает · приоритет · на чём держится',h:'Последняя колонка от сильного к слабому: стандарт рынка → данные проекта → отзыв → предположение. Сортировка по приоритету даёт порядок блоков сверху вниз. Тревожный сигнал — высокий приоритет на одном предположении'}
+    ]
+  }]
+},
+{
+  key:'e', title:'Раздел 5. Проверка принятых решений', lesson:'Урок 7.3',
+  note:'Единственный раздел, который останется с вами после этого проекта. Четыре вопроса и формула защиты работают с блоком, длиной формы, третьей кнопкой в шапке и любым «а давайте добавим».',
+  steps:[
+  {
+    title:'Проверить решения и работу целиком',
+    what:'Прогнать спорные решения через четыре вопроса, собрать принципы и сверить готовую работу.',
+    why:'Решение, которое нечем обосновать, на согласовании проигрывает вкусу заказчика. Обоснование готовится заранее, а не придумывается на встрече.',
+    out:'3–5 принципов проекта, готовые фразы защиты и мини-research на 2–3 страницы, который читается за пять минут.',
+    items:[
+      {t:'Четыре вопроса к спорному решению',h:'Это стандарт ниши или отклонение · что оно закрывает у человека · работает ли на целевое действие · что потеряем, если убрать. Не прошло ни одного пункта — кандидат на удаление'},
+      {t:'Сформулировать 3–5 принципов проекта',h:'«Путь до заказа — максимум четыре шага», «размер подбирается за один шаг». Рабочий принцип — тот, которым можно отклонить конкретное решение. «Сайт должен быть удобным» так не работает'},
+      {t:'Заготовить фразу защиты для главных решений',h:'Решение → как принято на рынке → чем это подтверждают люди. «Подбор по росту вынесли наверх: он есть у шести конкурентов из семи, и в 14 отзывах из 40 жалуются на ошибку с размером»'},
+      {t:'У каждого вывода есть источник, и первый источник — рынок',h:'Сначала сколько конкурентов, потом отзывы и цифры. Выводов «я так вижу» быть не должно'},
+      {t:'Каждый найденный барьер где-то на странице снимается',h:'Проверяем по списку барьеров, а не по списку блоков: один блок может закрывать несколько, а часть блоков — просто стандарт ниши'},
+      {t:'Работа заканчивается решениями, а не выводами',h:'Типичная ошибка — ресёрч ради ресёрча: много наблюдений и ноль следов в макете. Документ читается за пять минут: это рабочий инструмент и вход в проектирование, а не отчёт'}
+    ]
+  }]
+}
+];
+
+/* ============================================================
+   РЕНДЕР
+   ============================================================ */
+const KEY='m7-research-tracker-v2';
+let state = load();
+
+function load(){
+  try{ return JSON.parse(localStorage.getItem(KEY)) || {done:{},notes:{},meta:{}} }
+  catch(e){ return {done:{},notes:{},meta:{}} }
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)) }catch(e){}
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function itemsHTML(prefix, items){
+  return items.map((it,i)=>{
+    const id=prefix+':'+i;
+    const on=!!state.done[id];
+    return '<li data-id="'+id+'"'+(on?' class="is-done"':'')+'>'+
+      '<label class="row">'+
+        '<input type="checkbox" class="cb" data-id="'+id+'"'+(on?' checked':'')+'>'+
+        '<span class="txt"><span class="t">'+esc(it.t)+'</span>'+
+          (it.h?'<span class="h">'+esc(it.h)+'</span>':'')+
+        '</span>'+
+      '</label></li>';
+  }).join('');
+}
+
+function render(){
+  const root=document.getElementById('root');
+  let html='';
+  let n=0;
+  PHASES.forEach(ph=>{
+    html+='<section class="phase" id="ph-'+ph.key+'">'+
+      '<div class="phase-head"><h2>'+esc(ph.title)+'</h2><span class="tagl">'+esc(ph.lesson)+'</span></div>'+
+      '<p class="phase-note">'+esc(ph.note)+'</p>';
+    ph.steps.forEach((st,si)=>{
+      n++;
+      const pk=ph.key+si;
+      html+='<article class="step collapsed" data-step="'+pk+'">'+
+        '<div class="step-head">'+
+          '<span class="num">'+n+'</span>'+
+          '<span class="step-ttl"><h3>'+esc(st.title)+
+            '<span class="cnt" data-cnt="'+pk+'"></span>'+
+            (st.optional?'<span class="opt">если сайт есть</span>':'')+'</h3>'+
+            '<div class="what">'+esc(st.what)+'</div></span>'+
+          '<span class="chev"><svg width="22" height="22" viewBox="0 0 16 16" fill="none"><path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>'+
+        '</div>'+
+        '<div class="step-body">'+
+          '<div class="meta">'+
+            '<div><div class="k">Зачем это нужно</div><div class="v">'+esc(st.why)+'</div></div>'+
+            '<div><div class="k">Что остаётся на выходе</div><div class="v">'+esc(st.out)+'</div></div>'+
+          '</div>'+
+          '<ul class="checks">'+itemsHTML(pk,st.items)+'</ul>'+
+          '<div class="notes"><label>Выводы</label>'+
+            '<textarea data-note="'+pk+'" placeholder="Что нашли, где лежит, какие цифры">'+
+            esc(state.notes[pk]||'')+'</textarea></div>'+
+        '</div></article>';
+    });
+    html+='</section>';
+  });
+  root.innerHTML=html;
+
+  bind();
+  refresh();
+}
+
+function bind(){
+  document.querySelectorAll('.cb').forEach(cb=>{
+    cb.addEventListener('change',()=>{
+      const id=cb.dataset.id;
+      if(cb.checked) state.done[id]=1; else delete state.done[id];
+      cb.closest('li').classList.toggle('is-done',cb.checked);
+      save(); refresh();
+    });
+  });
+  document.querySelectorAll('.step-head').forEach(h=>{
+    h.addEventListener('click',()=>h.parentElement.classList.toggle('collapsed'));
+  });
+  document.querySelectorAll('textarea[data-note]').forEach(t=>{
+    t.addEventListener('input',()=>{
+      state.notes[t.dataset.note]=t.value;
+      save();
+    });
+  });
+}
+
+function refresh(){
+  document.querySelectorAll('.step').forEach(st=>{
+    const boxes=[...st.querySelectorAll('.cb')];
+    const d=boxes.filter(b=>b.checked).length;
+    st.querySelector('[data-cnt]').textContent=d+' / '+boxes.length;
+    st.classList.toggle('full', d===boxes.length && boxes.length>0);
+  });
+  const all=[...document.querySelectorAll('.cb')];
+  const done=all.filter(b=>b.checked).length;
+  const pct=all.length?Math.round(done/all.length*100):0;
+  document.getElementById('ringPct').textContent=pct+'%';
+  document.getElementById('ringCnt').textContent=done+' из '+all.length;
+  const C=2*Math.PI*58;
+  const rb=document.getElementById('ringBar');
+  rb.style.strokeDashoffset=C-(C*pct/100);
+  rb.style.stroke = pct===100 ? '#17A36B' : '#2F6BFF';
+  document.getElementById('ctlPct').textContent=pct+'%';
+  document.getElementById('ctlCnt').textContent=done+' из '+all.length;
+  document.querySelector('.ctl-pct').classList.toggle('done', pct===100);
+}
+
+/* ---------- ПАНЕЛЬ ---------- */
+document.getElementById('bExpand').onclick=()=>
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('collapsed'));
+document.getElementById('bCollapse').onclick=()=>
+  document.querySelectorAll('.step').forEach(s=>s.classList.add('collapsed'));
+/* сброс в два клика: системный confirm() показывается не во всех окнах,
+   поэтому подтверждение живёт в самой кнопке */
+const bReset=document.getElementById('bReset');
+const resetLabel=bReset.lastChild.textContent;
+let resetArmed=null;
+bReset.onclick=()=>{
+  if(!resetArmed){
+    bReset.classList.add('armed');
+    bReset.lastChild.textContent=' Точно сбросить?';
+    resetArmed=setTimeout(disarmReset,4000);
+    return;
+  }
+  disarmReset();
+  state={done:{},notes:{},meta:{}};
+  save(); render(); applyMeta();
+};
+function disarmReset(){
+  clearTimeout(resetArmed);
+  resetArmed=null;
+  bReset.classList.remove('armed');
+  bReset.lastChild.textContent=resetLabel;
+}
+
+/* ---------- ПОЛЯ ПРОЕКТА ---------- */
+const BUDGET={
+  land:'<b>Лендинг — около 2 часов исследования.</b> Один оффер и одно действие: хватает брифа, короткого разбора конкурентов и барьеров из отзывов.',
+  corp:'<b>Корпоративный сайт — 3–4 часа.</b> Больше разделов и больше блоков доверия: разбор конкурентов и отзывов делается полнее.',
+  shop:'<b>Интернет-магазин — 6–8 часов.</b> Каталог, карточка и оформление: нужен язык ниши, восемь параметров по выборке и подробный разбор барьеров.'
+};
+const DEFAULT_BUDGET=document.getElementById('budget').innerHTML;
+
+function applyMeta(){
+  ['fProject','fType'].forEach(id=>{
+    const el=document.getElementById(id);
+    el.value=state.meta[id]||'';
+    el.oninput=el.onchange=()=>{ state.meta[id]=el.value; save(); if(id==='fType') setBudget(); };
+  });
+  setBudget();
+}
+function setBudget(){
+  const v=state.meta.fType;
+  document.getElementById('budget').innerHTML = v&&BUDGET[v]
+    ? BUDGET[v]+' Ресёрч закладывается в смету отдельным этапом работы.'
+    : DEFAULT_BUDGET;
+}
+
+/* ---------- ПРИЛИПАНИЕ ПАНЕЛИ ---------- */
+new IntersectionObserver(([e])=>{
+  document.querySelector('.controls').classList.toggle('stuck', !e.isIntersecting);
+},{threshold:1}).observe(document.getElementById('sentinel'));
+
+render();
+applyMeta();
+</script>
+</body>
+</html>
